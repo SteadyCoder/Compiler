@@ -1,0 +1,39 @@
+Data1 segment 
+ BNUMBER    db      0101b
+ STRING1          db      0100b
+ STRING2          db      'HelloПр2'
+ DNUMBER    dd      567d
+ WNUMBER     dw     257h
+ VAL1       db      0111b 
+
+Data1 ends
+    assume cs:Code, es:Data1
+
+Code segment
+    LAD:
+    mov dl, 0111b 
+
+    mov dl, ‘HE’
+    stos STRING2[BP + SI]
+
+    mov ax, 1010b
+    mov bl, 101b
+    add ax, bx
+
+    and BNUMBER[BP + SI], bl
+
+    or DNUMBER[BP + SI], 12d
+
+    xchg al, BNUMBER[BP + SI]
+    or ds:[bx + di], 1011b
+    jbe LABEL
+
+    LABEL: 
+        mov dl, 0101b
+
+   jbe LAD
+   wait
+   retn 0
+
+Code ends
+    end start_label
