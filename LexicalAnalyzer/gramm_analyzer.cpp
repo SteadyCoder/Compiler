@@ -194,8 +194,10 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
     // For dw user_id to offset 8
     // For db user_id[] to offset 6
     // For dw user_id[] to offset 7
-    // For db ds: to offset 4
-    // For dw ds: to offset 4
+    // For db ds:[] to offset 4
+    // For dw ds:[] to offset 5
+    // For db ds:user_id to offset 6
+    // For dw ds:user_id to offset 7
     int last_elem_size = offset[offset.size() - 1];
     auto it = lexems.find(instr[0]);
     for (int i = 1; i < lexems.size(); ++i) {
@@ -206,23 +208,211 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
         auto found_one = tmp.find("REGISTR 16-BIT");
         auto found_two = tmp.find("REGISTR 8-BIT");
         if (found_one != std::string::npos) {
+            // For dw
+            int var = 0;
+            for (int i = 0; i < instr.size(); ++i)
+                if (!instr[i].compare("["))
+                    var = 1;
+            
+            for (int i = 0; i < instr.size(); ++i) {
+                if (!instr[i].compare(":") && var != 1)
+                    var = 2;
+                else if(!instr[i].compare(":") && var == 1)
+                    var = 3;
+            }
+            
+            switch (var) {
+                case 0:
+                    offset.push_back(last_elem_size + 8);
+                    break;
+                case 1:
+                    offset.push_back(last_elem_size + 7);
+                    break;
+                case 2:
+                    offset.push_back(last_elem_size + 7);
+                    break;
+                case 3:
+                    offset.push_back(last_elem_size + 5);
+                    break;
+                default:
+                    break;
+            }
             
         } else if(found_two != std::string::npos) {
+            // For db
+            int var = 0;
+            for (int i = 0; i < instr.size(); ++i)
+                if (!instr[i].compare("["))
+                    var = 1;
             
+            for (int i = 0; i < instr.size(); ++i)
+                if (!instr[i].compare(":"))
+                    var = 2;
+            
+            switch (var) {
+                case 0:
+                    offset.push_back(last_elem_size + 7);
+                    break;
+                case 1:
+                    offset.push_back(last_elem_size + 6);
+                    break;
+                case 2:
+                    offset.push_back(last_elem_size + 6);
+                    break;
+                case 3:
+                    offset.push_back(last_elem_size + 4);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
 
 void or_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
-    
+    // For db user_id to offset 8
+    // For dw user_id to offset 9
+    // For db user_id[] to offset 7
+    // For dw user_id[] to offset 8
+    // For db ds:[] to offset 5
+    // For dw ds:[] to offset 5
+    // For db ds:user_id to offset 7
+    // For dw ds:user_id to offset 8
+    int last_elem_size = offset[offset.size() - 1];
+    int var = -1;
+    std::string last_word = instr[instr.size() - 1];
+    auto found = last_word.find("B");
+    if (found != std::string::npos) {
+        // For 8 byte
+        for (int i = 0; i < instr.size(); ++i)
+            if (!instr[i].compare("["))
+                var = 0;
+        
+        for (int i = 0; i < instr.size(); ++i)
+            if (!instr[i].compare(":") && var != 0)
+                var = 1;
+            else if(!instr[i].compare(":") && var == 0)
+                var = 2;
+        
+        switch (var) {
+            case 0:
+                offset.push_back(last_elem_size + 7);
+                break;
+            case 1:
+                offset.push_back(last_elem_size + 7);
+                break;
+            case 2:
+                offset.push_back(last_elem_size + 5);
+                break;
+            default:
+                break;
+        }
+    } else {
+        // For 16 byte
+        for (int i = 0; i < instr.size(); ++i)
+            if (!instr[i].compare("["))
+                var = 0;
+        
+        for (int i = 0; i < instr.size(); ++i)
+            if (!instr[i].compare(":") && var != 0)
+                var = 1;
+            else if(!instr[i].compare(":") && var == 0)
+                var = 2;
+        
+        switch (var) {
+            case 0:
+                offset.push_back(last_elem_size + 8);
+                break;
+            case 1:
+                offset.push_back(last_elem_size + 8);
+                break;
+            case 2:
+                offset.push_back(last_elem_size + 5);
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 void stos_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
-    
+    // For user_id[] to offset 2
+    // For es:user_id[] to offset 2
+    // For es:[] to offset 2
+    int last_elem_size = offset[offset.size() - 1];
+    offset.push_back(last_elem_size + 2);
 }
 
 void xchg_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
+    // For db user_id[] to offset 6
+    // For dw user_id[] to offset 8
+    // For db ds:user_id[] to offset 6
+    // For dw ds:user_id[] to offset 6
+    // For db ds:[] to offset 4
+    // For dw ds:[] to offset 4
+    auto it = lexems.find(instr[1]);
+    int last_elem_size = offset[offset.size() - 1];
+    if (it != lexems.end()) {
+        std::string tmp = it->second;
+        auto found = tmp.find("REGISTR 16-BIT");
+        if (found != std::string::npos) {
+            int var = -1;
+            for (int i = 0; i < instr.size(); ++i)
+                if (!instr[i].compare("["))
+                    var = 0;
+            
+            for (int i = 0; i < instr.size(); ++i)
+                if (!instr[i].compare(":")) {
+                    if (!instr[i + 1].compare("["))
+                        var = 1;
+                    else
+                        var = 2;
+                }
+            
     
+            switch (var) {
+                case 0:
+                    offset.push_back(last_elem_size + 8);
+                    break;
+                case 1:
+                    offset.push_back(last_elem_size + 4);
+                    break;
+                case 2:
+                    offset.push_back(last_elem_size + 6);
+                    break;
+                default:
+                    break;
+            }
+            
+        } else {
+            int var = -1;
+            for (int i = 0; i < instr.size(); ++i)
+                if (!instr[i].compare("["))
+                    var = 0;
+            
+            for (int i = 0; i < instr.size(); ++i)
+                if (!instr[i].compare(":")) {
+                    if (!instr[i + 1].compare("["))
+                        var = 1;
+                    else
+                        var = 2;
+                }
+            
+            switch (var) {
+                case 0:
+                    offset.push_back(last_elem_size + 6);
+                    break;
+                case 1:
+                    offset.push_back(last_elem_size + 4);
+                    break;
+                case 2:
+                    offset.push_back(last_elem_size + 6);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
 
 void jbe_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
