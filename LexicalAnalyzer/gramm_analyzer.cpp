@@ -1,4 +1,4 @@
-  //
+//
 //  gramm_analyzer.cpp
 //  LexicalAnalyzer
 //
@@ -43,7 +43,7 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
             file << "\n";
             if ((i + 1) <= vect.size())
                 i++;
-        } else if(label_check(vect[i])){
+        } else if(label_check(vect[i], offset)){
             file << "000" << std::hex << offset[offset.size() - 1] << "\t";
             copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
             file << "\n";
@@ -131,9 +131,16 @@ bool mnem_check(std::vector<std::string>& vector, std::vector<std::string>& usr_
 }
 
 // Check if the row is label
-bool label_check(std::vector<std::string> label) {
-    if (!label[1].compare(":") && id_check(label[0]))
+bool label_check(std::vector<std::string> label, std::vector<int> offset) {
+    if (!label[1].compare(":") && id_check(label[0])) {
+        /*
+        label_type n_label;
+        n_label.name = label[0];
+        n_label.offset_number = offset[offset.size() - 1];
+        label_container.push_back(n_label);
+        */
         return true;
+    }
     return false;
 }
 
@@ -201,7 +208,7 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
     int last_elem_size = offset[offset.size() - 1];
     auto it = lexems.find(instr[0]);
     for (int i = 1; i < lexems.size(); ++i) {
-        it = lexems.find(instr[i]);
+        it = lexems.find(instr[instr.size() - 1]);
     }
     if (it != lexems.end()) {
         std::string tmp = it->second;
@@ -414,7 +421,20 @@ void xchg_command(std::vector<std::string> instr, std::vector<int>& offset, int 
         }
     }
 }
-
-void jbe_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
-    
-}
+//
+//void jbe_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
+//    int last_elem_size = offset[offset.size() - 1];
+//    for (int  i = 0; i < label_container.size(); ++i) {
+//        if (!label_container[i].name.compare(instr[1])) {
+//            int diff_in_offset = last_elem_size - label_container[i].offset_number;
+//            if (diff_in_offset > 0 && diff_in_offset < 128) {
+//                offset.push_back(last_elem_size + 2);
+//                return;
+//            } else if(diff_in_offset >= 128) {
+//                offset.push_back(last_elem_size + 4);
+//                return;
+//            }
+//        }
+//    }
+//    offset.push_back(last_elem_size + 6);
+//}

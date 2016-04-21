@@ -14,6 +14,15 @@
 
 enum instructions {MOV, ADD, AND, OR, XCHG, JBE, WAIT, RETN, STOS};
 
+
+struct label_type {
+    std::string name;
+    int offset_number;
+};
+
+//std::vector<label_type> label_container;
+
+
 void gram_analyze(std::vector<std::vector<std::string>>&);
 
 bool segment_check(std::vector<std::vector<std::string>>& vector, std::vector<std::string>& usr_id, std::vector<int>& offset, int index);
@@ -22,7 +31,7 @@ void command_run(std::vector<std::string> instuct, std::vector<int>& offset, int
 
 bool id_check(std::string str);
 bool valid_segment_name(std::vector<std::string> sentence);
-bool label_check(std::vector<std::string> label);
+bool label_check(std::vector<std::string> label, std::vector<int> offset);
 
 
 void mov_command(std::vector<std::string> instr, std::vector<int>& offset, int indx);
