@@ -13,6 +13,7 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
     file.open("/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/gram.txt");
     
     std::vector<std::string> user_id;
+    std::vector<label_type> label_container;
     std::vector<int> offset;
     int i = 0;
     
@@ -43,15 +44,23 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
             file << "\n";
             if ((i + 1) <= vect.size())
                 i++;
-        } else if(label_check(vect[i], offset)){
+        } else if(label_check(vect[i], offset, label_container)) {
+            
             file << "000" << std::hex << offset[offset.size() - 1] << "\t";
-            copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
+            copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, ""));
             file << "\n";
             if ((i + 1) <= vect.size())
                 i++;
+        } else if (!str.compare("END")){
+            file << "\t" << "\t";
+            copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
+            file << "\n";
+            if (i + 1 <= vect.size()) {
+                i++;
+            }
         } else {
-            command_run(vect[i], offset, i);
             file << "00" << std::hex << offset[offset.size() - 1] << "\t";
+            command_run(vect[i], offset, i, label_container);
             copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
             file << "\n";
             if ((i + 1) <= vect.size())
@@ -131,20 +140,20 @@ bool mnem_check(std::vector<std::string>& vector, std::vector<std::string>& usr_
 }
 
 // Check if the row is label
-bool label_check(std::vector<std::string> label, std::vector<int> offset) {
+bool label_check(std::vector<std::string> label, std::vector<int>& offset, std::vector<label_type>& lab_cont) {
+    int last_elem_size = offset[offset.size() - 1];
     if (!label[1].compare(":") && id_check(label[0])) {
-        /*
         label_type n_label;
         n_label.name = label[0];
         n_label.offset_number = offset[offset.size() - 1];
-        label_container.push_back(n_label);
-        */
+        lab_cont.push_back(n_label);
+        offset.push_back(last_elem_size);
         return true;
     }
     return false;
 }
 
-void command_run(std::vector<std::string> instuct, std::vector<int>& offset, int indx) {
+void command_run(std::vector<std::string> instuct, std::vector<int>& offset, int indx, std::vector<label_type> lab_cont) {
     std::string instruct_name = instuct[0];
     int last_elem_size = offset[offset.size() - 1];
     if (!instruct_name.compare("MOV"))
@@ -163,6 +172,8 @@ void command_run(std::vector<std::string> instuct, std::vector<int>& offset, int
         xchg_command(instuct, offset, indx);
     else if(!instruct_name.compare("RETN"))
         offset.push_back(last_elem_size + 1);
+    else if(!instruct_name.compare("JBE"))
+        jbe_command(instuct, offset, indx, lab_cont);
     
 }
 
@@ -191,7 +202,7 @@ void add_command(std::vector<std::string> instr, std::vector<int>& offset, int i
             offset.push_back(last_elem_size + 3);
         else
             // For 8 bit registre
-            offset.push_back(last_elem_size + 2);
+            offset.push_back(last_elem_size + 1);
     }
 }
 
@@ -252,15 +263,19 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
                 if (!instr[i].compare("["))
                     var = 1;
             
-            for (int i = 0; i < instr.size(); ++i)
+            for (int i = 0; i < instr.size(); ++i) {
                 if (!instr[i].compare(":"))
                     var = 2;
-            
+                else if(!instr[i].compare(":") && var == 1)
+                    var = 3;
+            }
+        
             switch (var) {
                 case 0:
                     offset.push_back(last_elem_size + 7);
                     break;
                 case 1:
+                    // user_id[] maybe 6
                     offset.push_back(last_elem_size + 6);
                     break;
                 case 2:
@@ -309,7 +324,8 @@ void or_command(std::vector<std::string> instr, std::vector<int>& offset, int in
                 offset.push_back(last_elem_size + 7);
                 break;
             case 2:
-                offset.push_back(last_elem_size + 5);
+                // Changed
+                offset.push_back(last_elem_size + 4);
                 break;
             default:
                 break;
@@ -422,19 +438,19 @@ void xchg_command(std::vector<std::string> instr, std::vector<int>& offset, int 
     }
 }
 //
-//void jbe_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
-//    int last_elem_size = offset[offset.size() - 1];
-//    for (int  i = 0; i < label_container.size(); ++i) {
-//        if (!label_container[i].name.compare(instr[1])) {
-//            int diff_in_offset = last_elem_size - label_container[i].offset_number;
-//            if (diff_in_offset > 0 && diff_in_offset < 128) {
-//                offset.push_back(last_elem_size + 2);
-//                return;
-//            } else if(diff_in_offset >= 128) {
-//                offset.push_back(last_elem_size + 4);
-//                return;
-//            }
-//        }
-//    }
-//    offset.push_back(last_elem_size + 6);
-//}
+void jbe_command(std::vector<std::string> instr, std::vector<int>& offset, int indx, std::vector<label_type> lab_cont) {
+    int last_elem_size = offset[offset.size() - 1];
+    for (int  i = 0; i < lab_cont.size(); ++i) {
+        if (!lab_cont[i].name.compare(instr[1])) {
+            int diff_in_offset = last_elem_size - lab_cont[i].offset_number;
+            if (diff_in_offset > 0 && diff_in_offset < 128) {
+                offset.push_back(last_elem_size + 2);
+                return;
+            } else if(diff_in_offset >= 128) {
+                offset.push_back(last_elem_size + 4);
+                return;
+            }
+        }
+    }
+    offset.push_back(last_elem_size + 6);
+}

@@ -1,29 +1,29 @@
-DATA1 SEGMENT 
- BNUMBER    DB      0101B
- STRING1          DB      0100B
- STRING2          DB      'HELLO2'
- DNUMBER    DD      567D
- WNUMBER     DW     257H
- VAL1       DB      0111B 
-DATA1 ENDS
-    ASSUME CS:CODE, ES:DATA1
-CODE SEGMENT
-    LAD:
-    MOV DL, 0111B 
-    MOV DL, 'HE'
-    STOS STRING2[BP + SI]
-    MOV AX, 1010B
-    MOV BL, 101B
-    ADD AX, BX
-    AND BNUMBER[BP + SI], BL
-    OR DNUMBER[BP + SI], 12D
-    XCHG AL, BNUMBER[BP + SI]
-    OR DS:[BX + DI], 1011B
-    JBE LABEL
-    LABEL: 
-        MOV DL, 0101B
-   JBE LAD
-   WAIT
-   RETN 0
-CODE ENDS
-    END
+DATA1 SEGMENT
+  BNUMBER    DB      0101B
+  STRING1          DB      0100B
+  STRING2          DB      'HELLO2'
+  DNUMBER    DD      567D
+  WNUMBER     DW     257H
+  VAL1       DB      0111B
+ DATA1
+     ASSUME CS:CODE, ES:DATA1
+ CODE SEGMENT
+     LAD:
+     MOV DL, 0111B
+     MOV DL, 'H'
+     STOS STRING2[BP + SI]
+     MOV AX, 1010B
+     MOV BL, 101B
+     ADD AX, BX
+     AND BNUMBER[BP + SI], BL
+     OR WNUMBER[BP + SI], 12D
+     XCHG AL, BNUMBER[BP + SI]
+     OR BYTE PTR DS:[BX + DI], 1011B
+     JBE LABE
+     LABE:
+         MOV DL, 0101B
+    JBE LAD
+    WAIT
+    RETN 0
+ CODE ENDS
+     END
