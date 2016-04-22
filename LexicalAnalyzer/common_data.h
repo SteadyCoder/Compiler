@@ -19,7 +19,11 @@ const std::map<std::string, std::string> lexems = {
     {"DB", "TYPE OF DATA"},
     {"DD", "TYPE OF DATA"},
     {"DW", "TYPE OF DATA"},
-    
+    {"BYTE", "TYPE OF DATA"},
+    {"WORD", "TYPE OF DATA"},
+    {"DWORD", "TYPE OF DATA"},
+    {"PTR", "TYPE OF DATA"},
+
     {"AX", "REGISTR 16-BIT"},
     {"BX", "REGISTR 16-BIT"},
     {"CX", "REGISTR 16-BIT"},
@@ -49,6 +53,7 @@ const std::map<std::string, std::string> lexems = {
     {"AND", "INSTRUCTION"},
     {"OR", "INSTRUCTION"},
     {"JBE", "INSTRUCTION"},
+    
     
     //    {", ';:[]+-*", "onesymbol"}
     

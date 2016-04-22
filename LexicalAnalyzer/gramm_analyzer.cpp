@@ -12,7 +12,7 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
     std::ofstream file;
     file.open("/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/gram.txt");
     
-    std::vector<std::string> user_id;
+    std::vector<user_id_type> user_id;
     std::vector<label_type> label_container;
     std::vector<int> offset;
     int i = 0;
@@ -31,6 +31,11 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
                 file << "000" << std::hex << offset[j] << "\t";
                 copy(tmp.begin(), tmp.end(), std::ostream_iterator<std::string>(file, "\t"));
                 file << "\n";
+                copy(tmp.begin(), tmp.end(), std::ostream_iterator<std::string>(std::cout, "\t"));
+                printf("\n");
+                if (!tmp[1].compare("ENDS")) {
+                    user_id[0].value_in_offset = offset[j];
+                }
                 
             }
             // change this!!
@@ -40,13 +45,19 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
                 i++;
         } else if(str.compare("ASSUME") == 0) {
             file << "\t";
-            copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
+//            copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
+            file << tmp_str[0] << "  " << tmp_str[1] << tmp_str[2] << tmp_str[3] << tmp_str[4]
+                 << "  " << tmp_str[5] << tmp_str[6] << tmp_str[7];
             file << "\n";
             if ((i + 1) <= vect.size())
                 i++;
-        } else if(label_check(vect[i], offset, label_container)) {
-            
-            file << "000" << std::hex << offset[offset.size() - 1] << "\t";
+        } else if(label_check(vect[i], offset, label_container, user_id)) {
+            int last_elem_size = offset[offset.size() - 1];
+            if (last_elem_size < 16)
+                file << "000";
+            else
+                file << "00";
+            file << std::hex << last_elem_size << "\t";
             copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, ""));
             file << "\n";
             if ((i + 1) <= vect.size())
@@ -55,26 +66,34 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
             file << "\t" << "\t";
             copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
             file << "\n";
-            if (i + 1 <= vect.size()) {
+            if (i + 1 <= vect.size())
                 i++;
+            for (int i = 0; i < user_id.size(); ++i) {
+                if (!user_id[i].name.compare("CODE")) {
+                    user_id[i].value_in_offset = offset[offset.size() - 1];
+                    break;
+                }
             }
         } else {
-            file << "00" << std::hex << offset[offset.size() - 1] << "\t";
+            if (offset[offset.size() - 1] < 16) {
+                file << "000" << std::hex << offset[offset.size() - 1] << "\t";
+            } else {
+                file << "00" << std::hex << offset[offset.size() - 1] << "\t";
+            }
             command_run(vect[i], offset, i, label_container);
-            copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
+            copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, " "));
             file << "\n";
             if ((i + 1) <= vect.size())
                 i++;
         }
-//        offset.clear();
     }
-    
+    information_output(user_id, file);
     file.close();
 }
 
 // Maybe add index int&
-bool segment_check(std::vector<std::vector<std::string>>& vector, std::vector<std::string>& usr_id, std::vector<int>& offset, int index) {
-    if (valid_segment_name(vector[index])) {
+bool segment_check(std::vector<std::vector<std::string>>& vector, std::vector<user_id_type>& usr_id, std::vector<int>& offset, int index) {
+    if (valid_segment_name(vector[index], usr_id)) {
         offset.push_back(0);
         offset.push_back(0);
         if ((index + 1) < vector.size())
@@ -92,9 +111,12 @@ bool segment_check(std::vector<std::vector<std::string>>& vector, std::vector<st
     return true;
 }
 
-bool valid_segment_name(std::vector<std::string> sentence) {
+bool valid_segment_name(std::vector<std::string> sentence, std::vector<user_id_type>& use_id) {
     if (sentence.size() == 2 && id_check(sentence[0])) {
         if (!sentence[1].compare("SEGMENT")) {
+            user_id_type tmp;
+            tmp.name = sentence[0];
+            use_id.push_back(tmp);
             return true;
         }
     }
@@ -113,26 +135,35 @@ bool id_check(std::string str) {
     }
 }
 
-bool mnem_check(std::vector<std::string>& vector, std::vector<std::string>& usr_id, std::vector<int>& offset, int indx) {
+bool mnem_check(std::vector<std::string>& vector, std::vector<user_id_type>& usr_id, std::vector<int>& offset, int indx) {
     std::string type_array[] = {"DB", "DD", "DW"};
+    user_id_type tmp;
     int last_elem_size = offset[offset.size() - 1];
     if (vector.size() >= 3) {
-        usr_id.push_back(vector[0]);
+        tmp.name = vector[0];
+        tmp.segment_name = "DATA1";
         if (vector[1] == type_array[0]) {
+            tmp.value_in_offset = offset[offset.size() - 1];
             if (!vector[2].compare("'") && !vector[vector.size() - 1].compare("'")) {
                 offset.push_back((int)(last_elem_size + vector[3].size()));
             } else {
                 offset.push_back((int)(last_elem_size + 1));
             }
+            tmp.type = "L BYTE";
+            usr_id.push_back(tmp);
             return true;
         } else if(vector[1] == type_array[1]) {
+            tmp.value_in_offset = offset[offset.size() - 1];
             offset.push_back((last_elem_size + 4));
+            tmp.type = "L DWORD";
+            usr_id.push_back(tmp);
             return true;
         } else if(vector[1] == type_array[2]) {
+            tmp.value_in_offset = offset[offset.size() - 1];
             offset.push_back((last_elem_size + 2));
+            tmp.type = "L WORD";
+            usr_id.push_back(tmp);
             return true;
-        } else {
-            return false;
         }
     }
     
@@ -140,7 +171,7 @@ bool mnem_check(std::vector<std::string>& vector, std::vector<std::string>& usr_
 }
 
 // Check if the row is label
-bool label_check(std::vector<std::string> label, std::vector<int>& offset, std::vector<label_type>& lab_cont) {
+bool label_check(std::vector<std::string> label, std::vector<int>& offset, std::vector<label_type>& lab_cont, std::vector<user_id_type>& use_id) {
     int last_elem_size = offset[offset.size() - 1];
     if (!label[1].compare(":") && id_check(label[0])) {
         label_type n_label;
@@ -148,6 +179,13 @@ bool label_check(std::vector<std::string> label, std::vector<int>& offset, std::
         n_label.offset_number = offset[offset.size() - 1];
         lab_cont.push_back(n_label);
         offset.push_back(last_elem_size);
+        
+        user_id_type tmp;
+        tmp.name = label[0];
+        tmp.segment_name = "CODE";
+        tmp.type = "L NEAR";
+        tmp.value_in_offset = last_elem_size;
+        use_id.push_back(tmp);
         return true;
     }
     return false;
@@ -184,7 +222,7 @@ void mov_command(std::vector<std::string> instr, std::vector<int>& offset, int i
         std::string tmp = it->second;
         auto found = tmp.find("REGISTR 16-BIT");
         if (found != std::string::npos) {
-            offset.push_back(last_elem_size + 4);
+            offset.push_back(last_elem_size + 3);
         } else {
             offset.push_back(last_elem_size + 2);
         }
@@ -199,10 +237,10 @@ void add_command(std::vector<std::string> instr, std::vector<int>& offset, int i
         auto found = tmp.find("REGISTR 16-BIT");
         if (found != std::string::npos)
             // For 16 bit registre
-            offset.push_back(last_elem_size + 3);
+            offset.push_back(last_elem_size + 2);
         else
             // For 8 bit registre
-            offset.push_back(last_elem_size + 1);
+            offset.push_back(last_elem_size + 2);
     }
 }
 
@@ -276,7 +314,7 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
                     break;
                 case 1:
                     // user_id[] maybe 6
-                    offset.push_back(last_elem_size + 6);
+                    offset.push_back(last_elem_size + 5);
                     break;
                 case 2:
                     offset.push_back(last_elem_size + 6);
@@ -325,7 +363,7 @@ void or_command(std::vector<std::string> instr, std::vector<int>& offset, int in
                 break;
             case 2:
                 // Changed
-                offset.push_back(last_elem_size + 4);
+                offset.push_back(last_elem_size + 3);
                 break;
             default:
                 break;
@@ -344,7 +382,7 @@ void or_command(std::vector<std::string> instr, std::vector<int>& offset, int in
         
         switch (var) {
             case 0:
-                offset.push_back(last_elem_size + 8);
+                offset.push_back(last_elem_size + 6);
                 break;
             case 1:
                 offset.push_back(last_elem_size + 8);
@@ -363,7 +401,7 @@ void stos_command(std::vector<std::string> instr, std::vector<int>& offset, int 
     // For es:user_id[] to offset 2
     // For es:[] to offset 2
     int last_elem_size = offset[offset.size() - 1];
-    offset.push_back(last_elem_size + 2);
+    offset.push_back(last_elem_size + 1);
 }
 
 void xchg_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
@@ -423,7 +461,7 @@ void xchg_command(std::vector<std::string> instr, std::vector<int>& offset, int 
             
             switch (var) {
                 case 0:
-                    offset.push_back(last_elem_size + 6);
+                    offset.push_back(last_elem_size + 5);
                     break;
                 case 1:
                     offset.push_back(last_elem_size + 4);
@@ -452,5 +490,39 @@ void jbe_command(std::vector<std::string> instr, std::vector<int>& offset, int i
             }
         }
     }
-    offset.push_back(last_elem_size + 6);
+    offset.push_back(last_elem_size + 4);
+}
+
+void information_output(std::vector<user_id_type> user_id, std::ofstream& file_to_write) {
+    int code_position = 0;
+    file_to_write << "\n\n";
+    for (int i = 0; i < user_id.size(); ++i) {
+        if (user_id[i].name.compare("CODE") == 0) {
+            code_position = i;
+            break;
+        }
+    }
+    
+    // Write to File the name of Code Segment
+    file_to_write << user_id[code_position].name << "\t\t\t\t" << "32 bit  00"
+                  << user_id[code_position].value_in_offset << "  PARA  " << "NONE\n";
+    
+    // Write to File the name of Data segment
+    file_to_write << user_id[0].name << "\t\t\t\t" << "32 bit  000"
+    << user_id[0].value_in_offset << "  PARA  " << "NONE\n\n";
+    
+    file_to_write << "Symbols: \n";
+    // Write to file the header of information space
+    file_to_write << "\t\tNAME\t\t Type\t Value\t Attr\n";
+    
+    // Write the user variables
+    for (int i = 1; i < user_id.size(); i++) {
+        if (i == code_position)
+            continue;
+
+        file_to_write << user_id[i].name << "\t\t\t\t" << user_id[i].type << "  000"
+                      << user_id[i].value_in_offset << "  " << user_id[i].segment_name << "\n";
+    }
+    
+    file_to_write << "@FILENAME\t\t\t\t" << "TEXT  " << "test\n";
 }

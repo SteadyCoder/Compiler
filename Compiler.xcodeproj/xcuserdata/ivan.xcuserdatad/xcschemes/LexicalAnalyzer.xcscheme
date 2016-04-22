@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "4F9A30741C99CF7700E8CF9C"
-               BuildableName = "LexicalAnalyzer"
-               BlueprintName = "LexicalAnalyzer"
-               ReferencedContainer = "container:LexicalAnalyzer.xcodeproj">
+               BuildableName = "Compiler"
+               BlueprintName = "Compiler"
+               ReferencedContainer = "container:Compiler.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4F9A30741C99CF7700E8CF9C"
-            BuildableName = "LexicalAnalyzer"
-            BlueprintName = "LexicalAnalyzer"
-            ReferencedContainer = "container:LexicalAnalyzer.xcodeproj">
+            BuildableName = "Compiler"
+            BlueprintName = "Compiler"
+            ReferencedContainer = "container:Compiler.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4F9A30741C99CF7700E8CF9C"
-            BuildableName = "LexicalAnalyzer"
-            BlueprintName = "LexicalAnalyzer"
-            ReferencedContainer = "container:LexicalAnalyzer.xcodeproj">
+            BuildableName = "Compiler"
+            BlueprintName = "Compiler"
+            ReferencedContainer = "container:Compiler.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "4F9A30741C99CF7700E8CF9C"
-            BuildableName = "LexicalAnalyzer"
-            BlueprintName = "LexicalAnalyzer"
-            ReferencedContainer = "container:LexicalAnalyzer.xcodeproj">
+            BuildableName = "Compiler"
+            BlueprintName = "Compiler"
+            ReferencedContainer = "container:Compiler.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

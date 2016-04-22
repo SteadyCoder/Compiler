@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:LexicalAnalyzer.xcodeproj">
+      location = "self:/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/Compiler.xcodeproj">
    </FileRef>
 </Workspace>

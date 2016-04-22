@@ -36,7 +36,7 @@
 		2C236B321CC6335100461274 /* test.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = test.asm; sourceTree = "<group>"; };
 		2C236B331CC6369800461274 /* Rightres_two.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Rightres_two.txt; sourceTree = "<group>"; };
 		4F5B9FFC1CAD3F9200A800C4 /* lexical_analyser.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = lexical_analyser.py; sourceTree = "<group>"; };
-		4F9A30751C99CF7800E8CF9C /* LexicalAnalyzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LexicalAnalyzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F9A30751C99CF7800E8CF9C /* Compiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Compiler; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F9A30781C99CF7800E8CF9C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		4F9A30811C9A3DDF00E8CF9C /* table_printer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table_printer.h; sourceTree = "<group>"; };
 		4F9A30821C9A3DE800E8CF9C /* table_printer.tpp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = table_printer.tpp.h; sourceTree = "<group>"; };
@@ -65,7 +65,7 @@
 		4F9A30761C99CF7800E8CF9C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4F9A30751C99CF7800E8CF9C /* LexicalAnalyzer */,
+				4F9A30751C99CF7800E8CF9C /* Compiler */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,9 +94,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4F9A30741C99CF7700E8CF9C /* LexicalAnalyzer */ = {
+		4F9A30741C99CF7700E8CF9C /* Compiler */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4F9A307C1C99CF7800E8CF9C /* Build configuration list for PBXNativeTarget "LexicalAnalyzer" */;
+			buildConfigurationList = 4F9A307C1C99CF7800E8CF9C /* Build configuration list for PBXNativeTarget "Compiler" */;
 			buildPhases = (
 				4F9A30711C99CF7700E8CF9C /* Sources */,
 				4F9A30721C99CF7700E8CF9C /* Frameworks */,
@@ -106,9 +106,9 @@
 			);
 			dependencies = (
 			);
-			name = LexicalAnalyzer;
+			name = Compiler;
 			productName = LexicalAnalyzer;
-			productReference = 4F9A30751C99CF7800E8CF9C /* LexicalAnalyzer */;
+			productReference = 4F9A30751C99CF7800E8CF9C /* Compiler */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -125,7 +125,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 4F9A30701C99CF7700E8CF9C /* Build configuration list for PBXProject "LexicalAnalyzer" */;
+			buildConfigurationList = 4F9A30701C99CF7700E8CF9C /* Build configuration list for PBXProject "Compiler" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -137,7 +137,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4F9A30741C99CF7700E8CF9C /* LexicalAnalyzer */,
+				4F9A30741C99CF7700E8CF9C /* Compiler */,
 			);
 		};
 /* End PBXProject section */
@@ -239,21 +239,21 @@
 		4F9A307D1C99CF7800E8CF9C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Compiler;
 			};
 			name = Debug;
 		};
 		4F9A307E1C99CF7800E8CF9C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Compiler;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4F9A30701C99CF7700E8CF9C /* Build configuration list for PBXProject "LexicalAnalyzer" */ = {
+		4F9A30701C99CF7700E8CF9C /* Build configuration list for PBXProject "Compiler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4F9A307A1C99CF7800E8CF9C /* Debug */,
@@ -262,7 +262,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4F9A307C1C99CF7800E8CF9C /* Build configuration list for PBXNativeTarget "LexicalAnalyzer" */ = {
+		4F9A307C1C99CF7800E8CF9C /* Build configuration list for PBXNativeTarget "Compiler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4F9A307D1C99CF7800E8CF9C /* Debug */,
