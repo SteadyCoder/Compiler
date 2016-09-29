@@ -16,7 +16,17 @@ In your input file, you are able to use only this instructions:
 "MOV" "STOS" "ADD" "WAIT" "RETN" "XCHG" "AND" "OR" "JBE"
 
 ## Test results
+Input file example:
+![alt tag](https://raw.githubusercontent.com/SteadyCoder/Compiler/master/test_pictures/Input\ file.png)
 
+Lexical analyse result
+![alt tag](https://raw.githubusercontent.com/SteadyCoder/Compiler/master/test_pictures/Lexical\ analyse.png)
+
+Sentence analyse result:
+![alt tag](https://raw.githubusercontent.com/SteadyCoder/Compiler/master/test_pictures/Sentence analyse.png)
+
+Listing(grammatic analyse result):
+![alt tag](https://raw.githubusercontent.com/SteadyCoder/Compiler/master/test_pictures/Listing.png)
 
 ## Build with
 C++14
