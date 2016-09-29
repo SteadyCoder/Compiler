@@ -4,7 +4,7 @@
 //
 //  Created by Ivan on 4/13/16.
 //  Copyright © 2016 Ivan Tkachenko. All rights reserved.
-//
+//  File consist all includes and prgmas using threw projects
 
 #ifndef stdafx_h
 #define stdafx_h

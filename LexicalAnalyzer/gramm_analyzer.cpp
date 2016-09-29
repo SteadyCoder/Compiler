@@ -8,10 +8,13 @@
 
 #include "gramm_analyzer.hpp"
 
+const std::string FILE_PATH_GRAM = "/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/gram.txt";
+
+// Grammatic analysis
 void gram_analyze(std::vector<std::vector<std::string>>& vect) {
     std::ofstream file;
-    file.open("/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/gram.txt");
-    
+    file.open(FILE_PATH_GRAM);
+    const int size_changer = 8;
     std::vector<user_id_type> user_id;
     std::vector<label_type> label_container;
     std::vector<int> offset;
@@ -38,14 +41,13 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
                 }
                 
             }
-            // change this!!
-            if (i < 8)
+            if (i < size_changer)
                 i += offset.size();
             else
                 i++;
+            
         } else if(str.compare("ASSUME") == 0) {
             file << "\t";
-//            copy(tmp_str.begin(), tmp_str.end(), std::ostream_iterator<std::string>(file, "\t"));
             file << tmp_str[0] << "  " << tmp_str[1] << tmp_str[2] << tmp_str[3] << tmp_str[4]
                  << "  " << tmp_str[5] << tmp_str[6] << tmp_str[7];
             file << "\n";
@@ -91,7 +93,7 @@ void gram_analyze(std::vector<std::vector<std::string>>& vect) {
     file.close();
 }
 
-// Maybe add index int&
+// Segment validation check
 bool segment_check(std::vector<std::vector<std::string>>& vector, std::vector<user_id_type>& usr_id, std::vector<int>& offset, int index) {
     if (valid_segment_name(vector[index], usr_id)) {
         offset.push_back(0);
@@ -135,6 +137,7 @@ bool id_check(std::string str) {
     }
 }
 
+// Mnemonic validation
 bool mnem_check(std::vector<std::string>& vector, std::vector<user_id_type>& usr_id, std::vector<int>& offset, int indx) {
     std::string type_array[] = {"DB", "DD", "DW"};
     user_id_type tmp;
@@ -170,7 +173,7 @@ bool mnem_check(std::vector<std::string>& vector, std::vector<user_id_type>& usr
     return false;
 }
 
-// Check if the row is label
+// Label validation
 bool label_check(std::vector<std::string> label, std::vector<int>& offset, std::vector<label_type>& lab_cont, std::vector<user_id_type>& use_id) {
     int last_elem_size = offset[offset.size() - 1];
     if (!label[1].compare(":") && id_check(label[0])) {
@@ -191,6 +194,7 @@ bool label_check(std::vector<std::string> label, std::vector<int>& offset, std::
     return false;
 }
 
+// Run commands depending in instruction
 void command_run(std::vector<std::string> instuct, std::vector<int>& offset, int indx, std::vector<label_type> lab_cont) {
     std::string instruct_name = instuct[0];
     int last_elem_size = offset[offset.size() - 1];
@@ -215,6 +219,7 @@ void command_run(std::vector<std::string> instuct, std::vector<int>& offset, int
     
 }
 
+// "MOV" command algorithm
 void mov_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
     auto it = lexems.find(instr[1]);
     int last_elem_size = offset[offset.size() - 1];
@@ -229,6 +234,7 @@ void mov_command(std::vector<std::string> instr, std::vector<int>& offset, int i
     }
 }
 
+// "ADD" command algorithm
 void add_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
     auto it = lexems.find(instr[1]);
     int last_elem_size = offset[offset.size() - 1];
@@ -244,16 +250,18 @@ void add_command(std::vector<std::string> instr, std::vector<int>& offset, int i
     }
 }
 
+// "ADD" command algorithm
 void and_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
+    // Opcode explanation
     // And is 2 byte in offset
-    // For db user_id to offset 7
-    // For dw user_id to offset 8
-    // For db user_id[] to offset 6
-    // For dw user_id[] to offset 7
-    // For db ds:[] to offset 4
-    // For dw ds:[] to offset 5
-    // For db ds:user_id to offset 6
-    // For dw ds:user_id to offset 7
+    // For db register user_id to offset 7
+    // For dw register user_id to offset 8
+    // For db register user_id[] to offset 6
+    // For dw register user_id[] to offset 7
+    // For db register ds:[] to offset 4
+    // For dw register ds:[] to offset 5
+    // For db register ds:user_id to offset 6
+    // For dw register ds:user_id to offset 7
     int last_elem_size = offset[offset.size() - 1];
     auto it = lexems.find(instr[0]);
     for (int i = 1; i < lexems.size(); ++i) {
@@ -264,7 +272,6 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
         auto found_one = tmp.find("REGISTR 16-BIT");
         auto found_two = tmp.find("REGISTR 8-BIT");
         if (found_one != std::string::npos) {
-            // For dw
             int var = 0;
             for (int i = 0; i < instr.size(); ++i)
                 if (!instr[i].compare("["))
@@ -295,7 +302,6 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
             }
             
         } else if(found_two != std::string::npos) {
-            // For db
             int var = 0;
             for (int i = 0; i < instr.size(); ++i)
                 if (!instr[i].compare("["))
@@ -313,7 +319,6 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
                     offset.push_back(last_elem_size + 7);
                     break;
                 case 1:
-                    // user_id[] maybe 6
                     offset.push_back(last_elem_size + 5);
                     break;
                 case 2:
@@ -329,7 +334,9 @@ void and_command(std::vector<std::string> instr, std::vector<int>& offset, int i
     }
 }
 
+// "OR" command algorithm
 void or_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
+    // Opcode explanation
     // For db user_id to offset 8
     // For dw user_id to offset 9
     // For db user_id[] to offset 7
@@ -396,6 +403,7 @@ void or_command(std::vector<std::string> instr, std::vector<int>& offset, int in
     }
 }
 
+// "STOS" command algorithm
 void stos_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
     // For user_id[] to offset 2
     // For es:user_id[] to offset 2
@@ -404,6 +412,7 @@ void stos_command(std::vector<std::string> instr, std::vector<int>& offset, int 
     offset.push_back(last_elem_size + 1);
 }
 
+// "XCHG" command algorithm
 void xchg_command(std::vector<std::string> instr, std::vector<int>& offset, int indx) {
     // For db user_id[] to offset 6
     // For dw user_id[] to offset 8
@@ -475,7 +484,8 @@ void xchg_command(std::vector<std::string> instr, std::vector<int>& offset, int 
         }
     }
 }
-//
+
+// "JBE" command algorithm
 void jbe_command(std::vector<std::string> instr, std::vector<int>& offset, int indx, std::vector<label_type> lab_cont) {
     int last_elem_size = offset[offset.size() - 1];
     for (int  i = 0; i < lab_cont.size(); ++i) {

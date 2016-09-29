@@ -14,11 +14,6 @@
 
 enum instructions {MOV, ADD, AND, OR, XCHG, JBE, WAIT, RETN, STOS};
 
-//class label_type {
-//    std::string name;
-//    int offset_number;
-//};
-
 struct label_type{
     std::string name;
     int offset_number;

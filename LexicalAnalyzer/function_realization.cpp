@@ -7,15 +7,20 @@
 
 #include "function_realization.hpp"
 
+const std::string FILE_PATH = "/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/res.txt";
+const std::string FILE_PATH_TWO = "/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/res_two.txt";
+const std::string FILE_PATH_ASM = "/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/test.asm";
+
 // Check sentence for valid consistensy
 bool is_valid_sentence(std::vector<std::string> sentence, std::set<std::string> delimits, std::set<std::string> instructions,
                        std::vector<int>& res_sentence) {
-    for (int i = 0; i < 2; ++i) {
+    const int first_pushes = 2;
+    // Feeling two first elemnts with 0
+    for (int i = 0; i < first_pushes; ++i) {
         res_sentence.push_back(0);
     }
     
     for(int i = 0; i < sentence.size(); ++i) {
-        //        auto it = lexems.find(sentence[i]);
         auto set_it = delimits.find(sentence[i]);
         auto instr_it = instructions.find(sentence[i]);
         
@@ -44,11 +49,11 @@ bool is_valid_sentence(std::vector<std::string> sentence, std::set<std::string> 
 }
 
 
-// check operand on errors
+// Check operand on errors
 bool check_operand(std::vector<std::string> sent, std::set<std::string> instr, std::vector<int>& res, int index) {
     bool flag = false;
     int i = 0;
-    
+    // Looking for commas
     for (i = 0; i < sent.size(); ++i) {
         if (sent[i].compare(",") == 0) {
             flag = true;
@@ -113,6 +118,7 @@ bool check_operand(std::vector<std::string> sent, std::set<std::string> instr, s
     return true;
 }
 
+// Validation of identifiers
 bool identifier_check(std::string str) {
     if (!str.empty() && str.length() <= max_lexems_length) {
         for (int i = 0; i < str.length(); ++i)
@@ -127,7 +133,8 @@ bool identifier_check(std::string str) {
 
 // Print the table of lexems
 bprinter::TablePrinter tableCreator(std::vector<std::vector<std::string>> vect) {
-    std::ofstream fout("/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/res.txt");
+    std::ofstream fout(FILE_PATH);
+    
     std::stringstream ss;
     ss << 34;
     std::string character = ss.str();
@@ -186,7 +193,7 @@ bprinter::TablePrinter tableCreator(std::vector<std::vector<std::string>> vect) 
 
 // Print the table of sentence structure
 bprinter::TablePrinter tableCreatorTwo(std::vector<std::vector<std::string>>& vect) {
-    std::ofstream fout1("/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/res_two.txt");
+    std::ofstream fout1(FILE_PATH_TWO);
     std::stringstream ss;
     ss << 34;
     std::string character = ss.str();
@@ -234,16 +241,15 @@ bprinter::TablePrinter tableCreatorTwo(std::vector<std::vector<std::string>>& ve
     return table;
 }
 
-// Function that read asm file and parse it into data structure
+// Function that parser of ASM file
 std::vector<std::vector<std::string>>read_file() {
     std::vector<std::vector<std::string> > result;
     std::vector<std::string> element_to_res;
     std::string word;
     std::ifstream file;
     
-    file.open("/Users/ivan/Developer/uniCode/ASM_2/LexAnalyzer/LexicalAnalyzer/LexicalAnalyzer/test.asm");
+    file.open(FILE_PATH_ASM);
     if (file.is_open()) {
-        std::cout << "File is open" << std::endl;
         while (getline(file, word)) {
             std::size_t pos, prev = 0;
             while ((pos = word.find_first_of("\n\t, ';:[]+-*", prev)) != word.npos) {
@@ -272,8 +278,6 @@ std::vector<std::vector<std::string>>read_file() {
     } else {
         std::cout << "Unable to open file\n";
     }
-    
-//    vector_of_words_print(result);
     
     return result;
 }

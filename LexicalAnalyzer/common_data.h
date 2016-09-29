@@ -53,11 +53,6 @@ const std::map<std::string, std::string> lexems = {
     {"AND", "INSTRUCTION"},
     {"OR", "INSTRUCTION"},
     {"JBE", "INSTRUCTION"},
-    
-    
-    //    {", ';:[]+-*", "onesymbol"}
-    
-    // Add another
 };
 
 

@@ -34,7 +34,6 @@
 		2C236ACC1CBECD3400461274 /* gramm_analyzer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = gramm_analyzer.hpp; sourceTree = "<group>"; };
 		2C236B311CC6321900461274 /* gram.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gram.txt; sourceTree = "<group>"; };
 		2C236B321CC6335100461274 /* test.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = test.asm; sourceTree = "<group>"; };
-		2C236B331CC6369800461274 /* Rightres_two.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Rightres_two.txt; sourceTree = "<group>"; };
 		4F5B9FFC1CAD3F9200A800C4 /* lexical_analyser.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = lexical_analyser.py; sourceTree = "<group>"; };
 		4F9A30751C99CF7800E8CF9C /* Compiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Compiler; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F9A30781C99CF7800E8CF9C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -78,14 +77,13 @@
 				2C236AC41CBDA7C400461274 /* function_realization.hpp */,
 				2C236ACB1CBECD3400461274 /* gramm_analyzer.cpp */,
 				2C236ACC1CBECD3400461274 /* gramm_analyzer.hpp */,
+				2C236AC61CBDA8ED00461274 /* stdafx.h */,
+				2C236ACA1CBEAC7200461274 /* common_data.h */,
 				4F9A30831C9A3DF400E8CF9C /* table_printer.cpp */,
 				4F9A30821C9A3DE800E8CF9C /* table_printer.tpp.h */,
 				4F9A30811C9A3DDF00E8CF9C /* table_printer.h */,
-				2C236AC61CBDA8ED00461274 /* stdafx.h */,
-				2C236ACA1CBEAC7200461274 /* common_data.h */,
 				2C236B321CC6335100461274 /* test.asm */,
 				2C236B311CC6321900461274 /* gram.txt */,
-				2C236B331CC6369800461274 /* Rightres_two.txt */,
 				4F5B9FFC1CAD3F9200A800C4 /* lexical_analyser.py */,
 			);
 			path = LexicalAnalyzer;
